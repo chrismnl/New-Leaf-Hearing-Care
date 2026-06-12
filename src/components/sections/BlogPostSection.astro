@@ -36,8 +36,14 @@ const imageFor = (post) => {
     alt: post.data.title || post.data.page_title || ""
   };
 
+  const storageKey = image.meta?.storageKey || image.storageKey || image.storage_key;
+
   return {
-    src: image.src || image.url || (image.filename ? `/assets/${image.filename}` : ""),
+    src:
+      image.src ||
+      image.url ||
+      (image.provider === "local" && storageKey ? `/_emdash/api/media/file/${storageKey}` : "") ||
+      (image.filename ? `/assets/${image.filename}` : ""),
     alt: image.alt || post.data.title || post.data.page_title || ""
   };
 };

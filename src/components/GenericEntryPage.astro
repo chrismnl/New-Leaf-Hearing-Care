@@ -11,7 +11,12 @@ const isBlogEntry = collection === "blog_posts";
 const getImage = (image) => {
   if (!image) return null;
   if (typeof image === "string") return { src: image, alt: title };
-  const src = image.src || image.url || (image.filename ? `/assets/${image.filename}` : "");
+  const storageKey = image.meta?.storageKey || image.storageKey || image.storage_key;
+  const src =
+    image.src ||
+    image.url ||
+    (image.provider === "local" && storageKey ? `/_emdash/api/media/file/${storageKey}` : "") ||
+    (image.filename ? `/assets/${image.filename}` : "");
   if (!src) return null;
   return {
     src,
@@ -31,7 +36,7 @@ const blogDateTime = blogDate && !Number.isNaN(blogDate.getTime())
 const sidebarBlogLinks = await getSidebarBlogLinks();
 ---
 
-<main class={isBlogEntry ? "blog-entry-page" : undefined}>
+<main class={isBlogEntry ? "blog-entry-page blog-entry-page--hearing-doctor" : undefined}>
   <section class="internal-hero-section new-leaf-texture-overlay" aria-labelledby="internal-page-heading">
     <div class="internal-hero-container">
       <nav class="eyebrow internal-hero-breadcrumb" aria-label="Breadcrumb">

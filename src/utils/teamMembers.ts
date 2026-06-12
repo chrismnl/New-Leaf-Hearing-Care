@@ -70,7 +70,7 @@ const teamMemberFromEntry = (entry: any): TeamMember | null => {
 export const getPublishedTeamMembers = async (): Promise<TeamMember[]> => {
   const { entries = [] } = await getEmDashCollection("team", {
     status: "published",
-    orderBy: { created_at: "desc" }
+    orderBy: { created_at: "asc" }
   });
 
   return entries.map(teamMemberFromEntry).filter(Boolean) as TeamMember[];
