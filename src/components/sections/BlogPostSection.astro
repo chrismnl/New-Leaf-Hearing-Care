@@ -1,6 +1,6 @@
 ---
 const { posts = [] } = Astro.props;
-const shouldShowControls = posts.length > 3;
+const shouldShowControls = posts.length > 1;
 
 const stripHtml = (value) => String(value ?? "").replace(/<[^>]*>/g, " ");
 
@@ -62,18 +62,6 @@ const isoDate = (date) => date.toISOString().slice(0, 10);
               <h2 id="blog-post-heading" class="section-title">From the Experts</h2>
             </div>
 
-            <div class="blog-post-controls" aria-label="Blog post carousel controls" hidden={!shouldShowControls}>
-              <button class="blog-post-nav" type="button" aria-label="Previous post" data-blog-post-prev>
-                <svg aria-hidden="true" viewBox="0 0 24 24">
-                  <path d="M19 12H5m0 0 6-6m-6 6 6 6" />
-                </svg>
-              </button>
-              <button class="blog-post-nav" type="button" aria-label="Next post" data-blog-post-next>
-                <svg aria-hidden="true" viewBox="0 0 24 24">
-                  <path d="M5 12h14m0 0-6-6m6 6-6 6" />
-                </svg>
-              </button>
-            </div>
           </div>
 
           <div class="blog-post-carousel">
@@ -99,6 +87,19 @@ const isoDate = (date) => date.toISOString().slice(0, 10);
                 );
               })}
             </div>
+          </div>
+
+          <div class="blog-post-controls" aria-label="Blog post carousel controls" hidden={!shouldShowControls}>
+            <button class="blog-post-nav" type="button" aria-label="Previous post" data-blog-post-prev>
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M19 12H5m0 0 6-6m-6 6 6 6" />
+              </svg>
+            </button>
+            <button class="blog-post-nav" type="button" aria-label="Next post" data-blog-post-next>
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M5 12h14m0 0-6-6m6 6-6 6" />
+              </svg>
+            </button>
           </div>
         </div>
       </section>

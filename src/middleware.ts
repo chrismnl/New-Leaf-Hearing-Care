@@ -5,6 +5,7 @@ const FILE_EXTENSION_PATTERN = /\.[a-z0-9]+$/i;
 const PUBLIC_HTML_CACHE_CONTROL = "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
 const EDGE_HTML_CACHE_CONTROL = "public, max-age=3600, stale-while-revalidate=86400";
 const PRIVATE_CACHE_CONTROL = "no-store, max-age=0";
+const HTML_CACHE_VERSION = "2026-06-12-controls-v2";
 const STATIC_PATHS = [
   "/",
   "/about/",
@@ -44,6 +45,7 @@ const isHtmlResponse = (response: Response) =>
 const getHtmlCacheKey = (url: URL) => {
   const cacheUrl = new URL(url);
   cacheUrl.search = "";
+  cacheUrl.searchParams.set("__html_cache_version", HTML_CACHE_VERSION);
   return new Request(cacheUrl.toString(), {
     method: "GET",
     headers: {
