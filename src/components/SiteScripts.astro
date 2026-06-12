@@ -453,18 +453,31 @@
         const carousel = document.querySelector(".audiology-services-section");
         if (!carousel) return;
 
+        const viewport = carousel.querySelector(".audiology-services-list");
         const track = carousel.querySelector(".audiology-services-track");
         const originalCards = Array.from(carousel.querySelectorAll(".audiology-service-card"));
         const previousButton = carousel.querySelector("[data-audiology-services-prev]");
         const nextButton = carousel.querySelector("[data-audiology-services-next]");
-        if (!track || !originalCards.length || !previousButton || !nextButton) return;
+        if (!viewport || !track || !originalCards.length || !previousButton || !nextButton) return;
 
         let position = 0;
         let visibleCount = 0;
         let isAnimating = false;
 
         const getVisibleCount = () => (window.matchMedia("(min-width: 1025px)").matches ? 2 : 1);
+        const shouldMatchActiveCardHeight = () => window.matchMedia("(max-width: 767px)").matches;
         const getGap = () => parseFloat(window.getComputedStyle(track).columnGap) || 0;
+
+        const setViewportHeight = () => {
+          if (!shouldMatchActiveCardHeight()) {
+            viewport.style.height = "";
+            return;
+          }
+
+          const activeCard = track.children[position];
+          if (!activeCard) return;
+          viewport.style.height = `${Math.ceil(activeCard.getBoundingClientRect().height)}px`;
+        };
 
         const setTrackPosition = (animate = true) => {
           const activeCard = track.querySelector(".audiology-service-card");
@@ -478,6 +491,7 @@
 
           const offset = position * (activeCard.getBoundingClientRect().width + getGap());
           track.style.transform = `translateX(-${offset}px)`;
+          setViewportHeight();
 
           if (!animate) {
             track.getBoundingClientRect();

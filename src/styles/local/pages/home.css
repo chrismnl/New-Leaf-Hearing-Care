@@ -1088,6 +1088,12 @@ font-size: 16px;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
+  .blog-post-section.has-carousel .blog-post-card {
+    flex: 0 0 calc((100% - var(--blog-post-gap)) / 2);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
   .blog-post-card__media {
   aspect-ratio: 5 / 3;
   }
@@ -1345,6 +1351,12 @@ font-size: 16px;
   .blog-post-card {
   flex: 0 0 100%;
       scroll-snap-align: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .blog-post-section.has-carousel .blog-post-card {
+    flex: 0 0 100%;
   }
 }
 
