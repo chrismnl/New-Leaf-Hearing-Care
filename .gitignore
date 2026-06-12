@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.astro-dev.log
+.astro-dev.err.log
+.wrangler/
+data/
+uploads/
+newleafhearingcare-staging/
+*.log

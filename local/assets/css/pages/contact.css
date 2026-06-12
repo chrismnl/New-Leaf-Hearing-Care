@@ -1,0 +1,5 @@
+/* Page-specific styles only. Do not place reusable section/component styles here. */
+
+.internal-content-container {
+  flex-direction: column;
+}

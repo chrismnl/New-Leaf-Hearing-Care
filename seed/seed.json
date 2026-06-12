@@ -1,0 +1,111 @@
+{
+  "version": "1",
+  "meta": {
+    "name": "New Leaf Hearing Care",
+    "description": "Homepage conversion seed for New Leaf Hearing Care."
+  },
+  "settings": {
+    "site_name": "New Leaf Hearing Care",
+    "site_description": "New Leaf Hearing Care connects you to expert audiologists in Arvada, CO and Littleton, CO.",
+    "phone": "(303) 639-5323",
+    "book_url": "#"
+  },
+  "collections": [
+    {
+      "slug": "posts",
+      "label": "Posts",
+      "labelSingular": "Post",
+      "supports": ["drafts", "revisions", "search"],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "featured_image",
+          "label": "Featured Image",
+          "type": "image"
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "excerpt",
+          "label": "Excerpt",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "supports": ["drafts", "revisions", "search"],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "searchable": true
+        }
+      ]
+    }
+  ],
+  "taxonomies": [
+    {
+      "name": "category",
+      "label": "Categories",
+      "labelSingular": "Category",
+      "hierarchical": true,
+      "collections": ["posts"]
+    },
+    {
+      "name": "tag",
+      "label": "Tags",
+      "labelSingular": "Tag",
+      "hierarchical": false,
+      "collections": ["posts"]
+    }
+  ],
+  "menus": [
+    {
+      "name": "primary",
+      "label": "Primary Navigation",
+      "items": [
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "#about"
+        },
+        {
+          "type": "custom",
+          "label": "Services",
+          "url": "#locations"
+        },
+        {
+          "type": "custom",
+          "label": "Hearing Aids",
+          "url": "#wellness"
+        },
+        {
+          "type": "custom",
+          "label": "Resources",
+          "url": "#difference"
+        }
+      ]
+    }
+  ]
+}

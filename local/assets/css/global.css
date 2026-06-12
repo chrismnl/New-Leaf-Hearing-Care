@@ -1,0 +1,199 @@
+/* Global design tokens, base styles, and site-wide typography. */
+
+:root {
+--primary: #6fa943;
+  --secondary: #17632f;
+  --text: #262b2b;
+  --accent: #6b4fb3;
+  --accent-secondary: #4e2c91;
+  --light: #ffffff;
+  --light-secondary: #f5f6f6;
+  --primary-light: #eaf2e3;
+  --accent-light: #e9e5f4;
+  --light-gray: #ccd1d1;
+  --gray: #878b8b;
+  --dark-gray: #1c2020;
+  --section-pad-d: 100px 20px;
+  --section-pad-l: 80px 20px;
+  --section-pad-t: 80px 40px;
+  --section-pad-m: 60px 20px;
+}
+
+::selection {
+background-color: var(--primary);
+    color: var(--light);
+}
+
+* {
+box-sizing: border-box;
+}
+
+html {
+scroll-behavior: smooth;
+}
+
+body {
+margin: 0;
+  color: var(--text);
+  background: var(--light);
+  font-family: "Open Sans", sans-serif;
+  overflow-x: hidden;
+}
+
+img {
+display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+.eyebrow {
+font-family: "Outfit", sans-serif;
+  margin: 0;
+}
+
+p {
+margin: 0;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.eyebrow {
+color: var(--accent);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.eyebrow--green {
+color: var(--primary);
+}
+
+.eyebrow--accent {
+color: var(--accent);
+}
+
+.eyebrow--light {
+color: var(--light-secondary);
+}
+
+.heading-group {
+--heading-group-gap: 6px;
+  display: grid;
+  gap: var(--heading-group-gap);
+  align-items: start;
+  justify-items: start;
+}
+
+.about-copy p:not(.eyebrow) {
+font-size: 18px;
+  line-height: 1.5;
+  color: var(--dark-gray);
+}
+
+.section-title {
+margin: 0;
+  font-family: "Outfit", sans-serif;
+  font-size: 48px;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.section-title--light {
+color: var(--light);
+}
+
+.difference-shell .section-title {
+text-align: center;
+  color: var(--dark-gray);
+}
+
+.wellness-content-intro .section-title {
+max-width: 420px;
+}
+
+.faq-intro .heading-group {
+position: relative;
+  z-index: 1;
+  gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .section-title {
+  font-size: 40px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .audiology-services-container .heading-group {
+  justify-items: start;
+      text-align: left;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .blog-post-heading.heading-group {
+  justify-items: start;
+      text-align: left;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .faq-intro .heading-group {
+  gap: 10px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .heading-group {
+  justify-items: center;
+      text-align: center;
+  }
+}
+
+@media (max-width: 767px) {
+  h2,
+  .section-title,
+  .heading-group h2 {
+  font-size: 36px;
+  }
+}
+
+@media (max-width: 767px) {
+  p:not(.hero-copy p) {
+  font-size: 16px;
+      line-height: 1.4;
+  }
+}
+
+@media (max-width: 767px) {
+  .about-copy p:not(.eyebrow) {
+  font-size: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .eyebrow {
+  font-size: 14px;
+  }
+}
+
+@media (max-width: 767px) {
+  .about-copy .heading-group {
+  justify-items: center;
+      text-align: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .heading-group {
+  align-self: center;
+      justify-items: center;
+      text-align: center;
+  }
+}

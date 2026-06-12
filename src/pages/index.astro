@@ -1,0 +1,40 @@
+---
+import Base from "../layouts/Base.astro";
+import Preloader from "../components/Preloader.astro";
+import Header from "../components/Header.astro";
+import HeroSection from "../components/sections/HeroSection.astro";
+import TrustBadgesSection from "../components/sections/TrustBadgesSection.astro";
+import AboutSection from "../components/sections/AboutSection.astro";
+import WellnessSection from "../components/sections/WellnessSection.astro";
+import DifferenceSection from "../components/sections/DifferenceSection.astro";
+import TeamSection from "../components/sections/TeamSection.astro";
+import AudiologyServicesSection from "../components/sections/AudiologyServicesSection.astro";
+import HearingAidsProtectionSection from "../components/sections/HearingAidsProtectionSection.astro";
+import TestimonialsSection from "../components/sections/TestimonialsSection.astro";
+import FaqSection from "../components/sections/FaqSection.astro";
+import BlogPostSection from "../components/sections/BlogPostSection.astro";
+import Footer from "../components/Footer.astro";
+import HomepageScripts from "../components/HomepageScripts.astro";
+
+export const cacheHint = 3600;
+---
+
+<Base>
+  <Preloader />
+  <Header />
+  <main>
+    <HeroSection />
+    <TrustBadgesSection />
+    <AboutSection />
+    <WellnessSection />
+    <DifferenceSection />
+    <TeamSection />
+    <AudiologyServicesSection />
+    <HearingAidsProtectionSection />
+    <TestimonialsSection />
+    <FaqSection />
+    <BlogPostSection />
+  </main>
+  <Footer />
+  <HomepageScripts />
+</Base>

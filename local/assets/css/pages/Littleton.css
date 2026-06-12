@@ -1,0 +1,288 @@
+/* Littleton location page styles only. */
+
+.new-leaf-texture-purple {
+z-index: 1;
+  isolation: isolate;
+}
+
+.new-leaf-texture-purple::before {
+content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(78, 44, 145, 0.68) 0%, rgba(107, 79, 179, 0.54) 100%);
+  pointer-events: none;
+}
+
+.new-leaf-texture-purple::after {
+z-index: 2;
+}
+
+.new-leaf-texture-purple .hero-bg-media {
+z-index: 0;
+}
+
+.new-leaf-texture-purple .hero-shell {
+z-index: 3;
+}
+
+.new-leaf-texture-purple .hero-copy h1,
+.new-leaf-texture-purple .hero-copy p,
+.new-leaf-texture-purple .hero-copy__accent {
+color: var(--light);
+}
+
+.new-leaf-texture-purple .hero-copy__accent {
+text-shadow: none;
+}
+
+.location-about-section {
+position: relative;
+  z-index: 2;
+}
+
+.location-about-section .about-shell {
+gap: 60px;
+}
+
+.difference-section {
+background: var(--light);
+}
+
+.about-intro {
+width: min(1280px, 100%);
+  margin: 0 auto;
+  padding: 60px;
+  border-radius: 40px;
+  background: var(--light);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 60px;
+  align-items: center;
+}
+
+.about-intro__media {
+margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-intro__logo {
+width: min(430px, 100%);
+  height: auto;
+  display: block;
+}
+
+.about-intro__copy {
+display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.about-intro__copy h2 {
+color: var(--dark-gray);
+  font-size: 48px;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.96px;
+}
+
+.about-intro__copy h2 span {
+color: var(--accent);
+}
+
+.about-intro__copy p {
+font-size: 20px;
+  line-height: 1.5;
+}
+
+.location-brand-lockup {
+height: 500px;
+  padding: 56px;
+  border-radius: 20px;
+  background: var(--light);
+  box-shadow: inset 0 0 0 1px var(--light-gray), 0 8px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 44px;
+}
+
+.location-brand-lockup .location-brand-lockup__logo {
+width: min(240px, 42%);
+  height: auto;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 0;
+}
+
+.location-brand-lockup__connector {
+width: 1px;
+  height: 180px;
+  background: var(--light-gray);
+  flex: 0 0 auto;
+}
+
+.location-card--single {
+grid-template-columns: 1fr;
+}
+
+.location-card--single::before,
+.location-card--single .location-tabs {
+display: none;
+}
+
+.location-card--single .location-panel {
+display: block;
+}
+
+.location-card--single .location-content {
+display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 60px;
+  align-items: stretch;
+}
+
+.location-card--single .location-map,
+.location-card--single .location-details {
+order: initial;
+}
+
+.location-card--single .location-map {
+height: auto;
+  min-height: 100%;
+}
+
+.location-card--single .map-preview,
+.location-card--single .map-preview iframe {
+height: 100%;
+  min-height: 100%;
+}
+
+.schedule-embed-section {
+position: relative;
+  z-index: 2;
+  padding: var(--section-pad-d);
+}
+
+.schedule-embed-container {
+width: min(1280px, 100%);
+  min-height: 420px;
+  margin: 0 auto;
+  padding: 60px;
+  border-radius: 40px;
+  background: var(--light);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 1366px) {
+  .about-intro {
+  width: 100%;
+      padding: 60px 40px;
+  }
+
+  .schedule-embed-section {
+  padding: var(--section-pad-l);
+  }
+
+  .schedule-embed-container {
+  width: 100%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .about-intro {
+  grid-template-columns: 1fr;
+      padding: 40px;
+      border-radius: 24px;
+      text-align: center;
+  }
+
+  .about-intro__copy {
+  align-items: center;
+  }
+
+  .location-card--single .location-content {
+  grid-template-columns: 1fr;
+  }
+
+  .location-card--single .location-details {
+  order: 1;
+  }
+
+  .location-card--single .location-map {
+  order: 2;
+      min-height: 320px;
+  }
+
+  .location-card--single .map-preview,
+  .location-card--single .map-preview iframe {
+  min-height: 320px;
+  }
+
+  .schedule-embed-section {
+  padding: var(--section-pad-t);
+  }
+
+  .schedule-embed-container {
+  padding: 40px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .location-brand-lockup {
+  height: auto;
+      min-height: 360px;
+  }
+}
+
+@media (max-width: 767px) {
+  .about-intro {
+  padding: 30px;
+      border-radius: 20px;
+  }
+
+  .about-intro__copy h2 {
+  font-size: 32px;
+      letter-spacing: 0;
+  }
+
+  .about-intro__copy p {
+  font-size: 17px;
+  }
+
+  .location-brand-lockup {
+  height: auto;
+      min-height: 280px;
+      padding: 32px 24px;
+      border-radius: 12px;
+      flex-direction: column;
+      gap: 28px;
+  }
+
+  .location-brand-lockup .location-brand-lockup__logo {
+  width: min(260px, 100%);
+      max-height: 120px;
+  }
+
+  .location-brand-lockup__connector {
+  width: 180px;
+      height: 1px;
+  }
+
+  .location-card--single .location-tabs {
+  display: none;
+  }
+
+  .schedule-embed-section {
+  padding: var(--section-pad-m);
+  }
+
+  .schedule-embed-container {
+  min-height: 320px;
+      padding: 30px;
+      border-radius: 20px;
+  }
+}

@@ -1,0 +1,382 @@
+/* Reusable components, buttons, overlays, and loaders. */
+
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-outline-purple,
+.btn-outline-light {
+font-family: "Outfit", sans-serif;
+  margin: 0;
+}
+
+.btn {
+display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 16px 24px;
+  border-radius: 100px;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.btn-primary {
+color: var(--light);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.btn-secondary {
+color: var(--secondary);
+  background: var(--light);
+  border: 1px solid var(--light);
+}
+
+.btn-outline-purple {
+color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+}
+
+.btn-outline-light {
+color: var(--light);
+  background: transparent;
+  border: 1px solid var(--light);
+}
+
+.btn-accent {
+color: var(--light);
+  background: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-primary:hover {
+background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+}
+
+.btn-secondary:hover {
+color: var(--light);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-outline-purple:hover {
+color: var(--light);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn-outline-light:hover {
+color: var(--secondary);
+  background: var(--light);
+  border-color: var(--light);
+}
+
+.btn-accent:hover {
+background: var(--secondary);
+  border-color: var(--secondary);
+}
+
+.page-preloader {
+position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
+}
+
+.page-preloader.is-hidden {
+opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.leaf-loader {
+position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.leaf-loader__arc {
+position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: conic-gradient(currentColor 0deg 180deg, transparent 180deg 360deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 6px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 6px));
+  animation: leafLoaderSpin 1.4s linear infinite;
+}
+
+.leaf-loader__arc--primary {
+color: var(--primary);
+}
+
+.leaf-loader__arc--accent {
+inset: 14px;
+  color: var(--accent);
+  animation-direction: reverse;
+  animation-duration: 1.05s;
+}
+
+@keyframes leafLoaderSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hero-copy .button-row {
+position: relative;
+  z-index: 1;
+}
+
+.button-row {
+display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.button-row .btn {
+width: 282px;
+}
+
+.new-leaf-texture-overlay {
+background: linear-gradient(0deg, #17632f 0%, #6fa943 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.new-leaf-texture-overlay > * {
+position: relative;
+  z-index: 2;
+}
+
+.new-leaf-texture-overlay::before {
+content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../../../assets/new-leaf-hearing-care-texture.webp") center/cover no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.new-leaf-texture-overlay::after {
+content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-radial-gradient(circle at 1px 1px, rgba(11, 48, 22, 0.14) 0 1px, transparent 1px 2px);
+  background-size: 2px 2px;
+  pointer-events: none;
+}
+
+.new-leaf-texture-green {
+background: linear-gradient(0deg, #17632f 0%, #6fa943 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.new-leaf-texture-green::after {
+content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-radial-gradient(circle at 1px 1px, rgba(11, 48, 22, 0.14) 0 1px, transparent 1px 2px);
+  background-size: 2px 2px;
+  pointer-events: none;
+}
+
+.new-leaf-texture-purple {
+background: linear-gradient(0deg, #4E2C91 0%, #6B4FB3 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.new-leaf-texture-purple::after {
+content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-radial-gradient(circle at 1px 1px, rgba(11, 48, 22, 0.14) 0 1px, transparent 1px 2px);
+  background-size: 2px 2px;
+  pointer-events: none;
+}
+
+.new-leaf-video-overlay {
+background: linear-gradient(0deg, rgba(23, 99, 47, 0.85) 0%, rgba(111, 169, 67, 0.85) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.new-leaf-video-overlay > * {
+position: relative;
+  z-index: 2;
+}
+
+.new-leaf-video-overlay::before {
+content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../../../assets/new-leaf-hearing-care-texture.webp") center/cover no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.new-leaf-video-overlay::after {
+content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-radial-gradient(circle at 1px 1px, rgba(11, 48, 22, 0.14) 0 1px, transparent 1px 2px);
+  background-size: 2px 2px;
+  pointer-events: none;
+}
+
+.about-copy .btn {
+width: fit-content;
+  margin-top: 10px;
+}
+
+.button-row--location {
+gap: 20px;
+  justify-content: center;
+}
+
+.button-row--location .btn {
+width: auto;
+  min-width: 220px;
+}
+
+.wellness-content-cta .btn {
+min-width: 250px;
+}
+
+.blog-post-card__content .btn {
+margin-top: 12px;
+}
+
+@media (max-width: 1366px) {
+  .audiology-service-card__content > :not(.btn) {
+  width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .audiology-service-card__content .btn {
+  width: 100%;
+  }
+}
+
+@media (max-width: 1366px) {
+  .about-copy .btn {
+  width: fit-content;
+      min-width: 0;
+      z-index: 1;
+  }
+}
+
+@media (max-width: 1024px) {
+  .button-row,
+  .button-row--location {
+  grid-template-columns: 1fr;
+      display: grid;
+  }
+}
+
+@media (max-width: 1024px) {
+  .button-row .btn,
+  .about-copy .btn {
+  width: 100%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .button-row--location .btn {
+  width: 100%;
+      min-width: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .wellness-content-cta .btn {
+  width: 100%;
+      min-width: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-copy .button-row {
+  display: flex;
+      flex-direction: column;
+      width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-copy .button-row .btn {
+  width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .location-card .button-row {
+  display: flex;
+      flex-direction: row;
+      justify-content: center;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .location-card .button-row .btn {
+  width: auto;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .hero-copy .button-row {
+  display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin-top: 16px;
+      width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .about-copy .btn {
+  width: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .btn {
+  min-height: 0;
+      padding: 14px;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: normal;
+  }
+}
+
+@media (max-width: 767px) {
+  .button-row {
+  gap: 14px;
+  }
+}

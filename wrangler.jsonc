@@ -1,0 +1,51 @@
+{
+  "name": "new-leaf-hearing-care",
+  "account_id": "981338e6544cfe45d9819bf0ea6eb83a",
+  "compatibility_date": "2026-03-29",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "new-leaf-hearing-care-db",
+      "database_id": "49294195-5665-4734-9956-647bb872579b"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "new-leaf-hearing-care-media"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+      "id": "b0a88beb034a433788cd9725301d5f5f"
+    }
+  ],
+  "env": {
+    "staging": {
+      "name": "newleafhearing-staging",
+      "workers_dev": true,
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "newleafhearing-staging-db",
+          "database_id": "5c223806-0e17-4dfb-aaa1-2d84e7560eb2"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "MEDIA",
+          "bucket_name": "newleafhearing-staging-media"
+        }
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "SESSION",
+          "id": "b0a88beb034a433788cd9725301d5f5f"
+        }
+      ]
+    }
+  }
+}
