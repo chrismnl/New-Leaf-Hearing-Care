@@ -146,7 +146,12 @@
         },
         {
           "slug": "title",
-          "label": "Title",
+          "label": "Team Member Name",
+          "type": "string"
+        },
+        {
+          "slug": "job_title",
+          "label": "Job Title",
           "type": "string"
         },
         {
@@ -35493,7 +35498,8 @@
               ]
             }
           ],
-          "title": "Practice Owner & Director of Audiology",
+          "title": "Dusty Jessen, Au.D.",
+          "job_title": "Practice Owner & Director of Audiology",
           "featured_image": {
             "provider": "external",
             "id": "audiologist-dusty-jessen",
@@ -35598,7 +35604,8 @@
               ]
             }
           ],
-          "title": "Audiologist",
+          "title": "Julie Raney, M.S.",
+          "job_title": "Audiologist",
           "featured_image": {
             "provider": "external",
             "id": "audiologist-julie-raney",
@@ -35767,7 +35774,8 @@
               ]
             }
           ],
-          "title": "Audiologist",
+          "title": "Lisa Marie Bell, Au.D.",
+          "job_title": "Audiologist",
           "featured_image": {
             "provider": "external",
             "id": "audiologist-lisa-marie-bell",
@@ -35802,7 +35810,8 @@
               ]
             }
           ],
-          "title": "Patient Care Coordinator",
+          "title": "Rose Young",
+          "job_title": "Patient Care Coordinator",
           "featured_image": {
             "provider": "external",
             "id": "patient-care-coordinator-rose-young",

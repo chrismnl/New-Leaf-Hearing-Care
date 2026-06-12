@@ -39,7 +39,7 @@ const loadShell = shellImports[shellPath];
 const shell = loadShell ? await loadShell() : "";
 const data = entry.data;
 ---
-<Base title={data.meta_title || data.title || data.page_title} description={data.meta_description || ""}>
+<Base title={data.meta_title || data.page_title || data.title} description={data.meta_description || ""}>
   {shell ? (
     <EntryShell shell={shell} introContent={data.intro_content || []} content={data.content || []} />
   ) : (

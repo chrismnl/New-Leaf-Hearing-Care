@@ -3,7 +3,7 @@ import PortableRichText from "./PortableRichText.astro";
 import { getSidebarBlogLinks } from "../utils/sidebarBlogLinks";
 
 const { data, collection } = Astro.props;
-const title = data.title || data.page_title || "Page";
+const title = data.page_title || data.title || "Page";
 const introContent = data.intro_content || [];
 const content = data.content || [];
 const isBlogEntry = collection === "blog_posts";
