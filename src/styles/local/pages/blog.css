@@ -1,0 +1,178 @@
+.page-placeholder-section {
+  background: var(--light);
+}
+
+.page-placeholder-container {
+  width: 100%;
+}
+
+.blog-info-container {
+display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+  color: var(--light);
+  margin-top: 20px;
+}
+
+.blog-info-item {
+display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--light);
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.blog-info-item svg {
+width: 18px;
+  height: 18px;
+  fill: currentColor;
+  flex: 0 0 auto;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.blog-entry-featured-image {
+  width: 100%;
+  margin: 0 0 12px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--light-secondary);
+}
+
+.blog-entry-featured-image img {
+  width: 100%;
+  display: block;
+  height: auto;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content li {
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content ul,
+.blog-entry-page--hearing-doctor .internal-article-content div {
+  font-size: 18px;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content :is(h2, h3, h4, h5, h6) {
+  margin: 0;
+  font-family: "Outfit", sans-serif;
+  font-weight: 500;
+  scroll-margin-top: var(--internal-anchor-offset, 164px);
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content :is(p, ul, div) + :is(h2, h3, h4, h5, h6) {
+  margin-top: 30px;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content h2 {
+  font-size: 36px;
+  line-height: 1.15;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content h3 {
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content h4 {
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content h5 {
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.blog-entry-page--hearing-doctor .internal-article-content h6 {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+@media (max-width: 1024px) {
+  .blog-entry-page--hearing-doctor .internal-article-content h2 {
+    font-size: 34px;
+  }
+
+  .blog-entry-page--hearing-doctor .internal-article-content h3 {
+    font-size: 28px;
+  }
+
+  .blog-entry-page--hearing-doctor .internal-article-content h4 {
+    font-size: 24px;
+  }
+
+  .blog-info-container {
+  gap: 28px;
+  }
+
+  .blog-info-item {
+  font-size: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .blog-entry-page--hearing-doctor .internal-article-content li {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .blog-entry-page--hearing-doctor .internal-article-content ul,
+  .blog-entry-page--hearing-doctor .internal-article-content div {
+    font-size: 16px;
+  }
+
+  .blog-entry-page--hearing-doctor .internal-article-content h2 {
+    font-size: 30px;
+  }
+
+  .blog-entry-page--hearing-doctor .internal-article-content h3 {
+    font-size: 26px;
+  }
+
+  .blog-entry-page--hearing-doctor .internal-article-content h4 {
+    font-size: 22px;
+  }
+
+  .blog-entry-page--hearing-doctor .internal-article-content h5 {
+    font-size: 20px;
+  }
+
+  .blog-entry-page--hearing-doctor .internal-article-content h6 {
+    font-size: 18px;
+  }
+
+  .blog-info-container {
+  flex-direction: column;
+      gap: 14px;
+  }
+
+  .blog-info-item {
+  font-size: 16px;
+  }
+
+  .blog-info-item svg {
+  width: 18px;
+      height: 18px;
+  }
+}

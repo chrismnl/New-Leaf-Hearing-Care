@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.astro-dev.log
+.astro-dev*.log
+*.log
+*.err.log
+data/
+uploads/
+qa/

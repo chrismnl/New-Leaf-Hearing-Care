@@ -1,0 +1,8 @@
+---
+import Base from "../layouts/Base.astro";
+import pageHtml from "../content-shells/static/audiologist-hearing-aids-arvada-colorado.html?raw";
+export const cacheHint = 3600;
+---
+<Base title="New Leaf Hearing Care | Audiologists and Hearing Aids in Arvada, CO" description="New Leaf Hearing Care provides expert hearing care and hearing aids in Arvada, CO.">
+  <Fragment set:html={pageHtml} />
+</Base>

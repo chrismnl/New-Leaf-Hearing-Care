@@ -1,0 +1,148 @@
+---
+import { getEmDashCollection } from "emdash";
+import PortableRichText from "./PortableRichText.astro";
+
+const { data, collection, slug } = Astro.props;
+const title = data.title || data.page_title || "Page";
+const introContent = data.intro_content || [];
+const content = data.content || [];
+const isHearingDoctorBlog = collection === "blog_posts" && slug === "what-does-a-hearing-doctor-audiologist-do";
+
+const getImage = (image) => {
+  if (!image) return null;
+  if (typeof image === "string") return { src: image, alt: title };
+  const src = image.src || image.url || (image.filename ? `/assets/${image.filename}` : "");
+  if (!src) return null;
+  return {
+    src,
+    alt: image.alt || title
+  };
+};
+
+const featuredImage = isHearingDoctorBlog ? getImage(data.featured_image) : null;
+const displayedAuthorName = data.displayed_author_name || "";
+const displayedPublishDate = data.displayed_publish_date || "";
+const displayedTags = data.displayed_tags || "";
+const blogDate = displayedPublishDate ? new Date(displayedPublishDate) : null;
+const blogDateTime = blogDate && !Number.isNaN(blogDate.getTime())
+  ? blogDate.toISOString().slice(0, 10)
+  : undefined;
+
+const normalizeBlogSlug = (entry) => {
+  const raw = entry.slug || entry.data?.slug || entry.data?.page_slug || entry.id || "";
+  return String(raw).replace(/^\/+|\/+$/g, "").replace(/^blog\//, "");
+};
+
+const { entries: sidebarBlogPosts = [] } = isHearingDoctorBlog
+  ? await getEmDashCollection("blog_posts", {
+      status: "published",
+      orderBy: { published_at: "desc" }
+    })
+  : { entries: [] };
+
+const sidebarBlogLinks = sidebarBlogPosts.slice(0, 5).map((entry) => ({
+  href: `/${normalizeBlogSlug(entry)}/`,
+  title: entry.data?.title || entry.data?.page_title || entry.data?.meta_title || "Blog Post"
+}));
+---
+
+<main class={isHearingDoctorBlog ? "blog-entry-page blog-entry-page--hearing-doctor" : undefined}>
+  <section class="internal-hero-section new-leaf-texture-overlay" aria-labelledby="internal-page-heading">
+    <div class="internal-hero-container">
+      <nav class="eyebrow internal-hero-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">&gt;</span>
+        <span>{title}</span>
+      </nav>
+      <h1 id="internal-page-heading" class="internal-hero-title">{title}</h1>
+      {isHearingDoctorBlog && (
+        <div class="blog-info-container" aria-label="Blog post information">
+          {displayedAuthorName && (
+            <span class="blog-info-item">
+              <svg aria-hidden="true" viewBox="0 0 448 512">
+                <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512h388.6c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304h-91.4z" />
+              </svg>
+              <span>{displayedAuthorName}</span>
+            </span>
+          )}
+          {displayedPublishDate && (
+            <span class="blog-info-item">
+              <svg aria-hidden="true" viewBox="0 0 448 512">
+                <path d="M128 0c17.7 0 32 14.3 32 32v32h128V32c0-17.7 14.3-32 32-32s32 14.3 32 32v32h48c26.5 0 48 21.5 48 48v48H0v-48C0 85.5 21.5 64 48 64h48V32c0-17.7 14.3-32 32-32zM0 192h448v272c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192zm64 80v48h64v-48H64zm96 0v48h64v-48h-64zm96 0v48h64v-48h-64z" />
+              </svg>
+              <time datetime={blogDateTime}>{displayedPublishDate}</time>
+            </span>
+          )}
+          {displayedTags && (
+            <span class="blog-info-item">
+              <svg aria-hidden="true" viewBox="0 0 448 512">
+                <path d="M48 32h168.6c12.7 0 24.9 5.1 33.9 14.1l176 176c18.7 18.7 18.7 49.1 0 67.9L266 450.5c-18.7 18.7-49.1 18.7-67.9 0l-176-176C13.1 265.5 8 253.3 8 240.6V80c0-26.5 21.5-48 48-48zm64 128a48 48 0 1 0 0-96a48 48 0 1 0 0 96z" />
+              </svg>
+              <span>{displayedTags}</span>
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="internal-content-section">
+    <div class="internal-content-container">
+      <div class="content-container-left">
+        <article class={isHearingDoctorBlog ? "internal-article-content" : "internal-article"}>
+          {featuredImage && (
+            <figure class="blog-entry-featured-image">
+              <img src={featuredImage.src} alt={featuredImage.alt} loading="eager" decoding="async" />
+            </figure>
+          )}
+          <PortableRichText value={introContent} />
+          <PortableRichText value={content} />
+        </article>
+      </div>
+
+      <aside class="sidebar-container" aria-label={isHearingDoctorBlog ? "Related information" : `${title} sidebar`}>
+        {isHearingDoctorBlog ? (
+          <div class="sidebar-cta">
+            <div class="sidebar-cta-image">
+              <img src="/assets/new-leaf-hearing-care-image-017.webp" alt="New Leaf Hearing Care consultation" loading="lazy" decoding="async" />
+            </div>
+            <div class="sidebar-cta-content">
+              <p class="sidebar-cta-title">Are you ready to hear and be heard?</p>
+              <p>Hearing clearly impacts your quality of life now and for years to come. Call us today and take the first step toward clearer, more confident listening.</p>
+              <a class="btn btn-accent" href="/contact-us/">Book an Appointment</a>
+            </div>
+          </div>
+        ) : (
+          <section class="sidebar-cta new-leaf-texture-overlay">
+            <h2 class="sidebar-cta-title">Ready to Feel More Like Yourself Again?</h2>
+            <p>Schedule an appointment with New Leaf Hearing Care.</p>
+            <a class="btn btn-primary" href="/contact-us/">Schedule an Appointment</a>
+          </section>
+        )}
+
+        <div class="sidebar-blogs">
+          {isHearingDoctorBlog ? (
+            <p class="sidebar-blogs-title">Recent News &amp; Articles</p>
+          ) : (
+            <h2 class="sidebar-blogs-title">Recent News/Articles</h2>
+          )}
+          <div class="sidebar-blogs__links">
+            {isHearingDoctorBlog ? (
+              <>
+                {sidebarBlogLinks.map((post) => (
+                  <a href={post.href}>{post.title}</a>
+                ))}
+              </>
+            ) : (
+              <>
+                <a href="/resources/faq/">Frequently Asked Questions</a>
+                <a href="/hearing-loss/">Hearing Loss</a>
+                <a href="/hearing-aid-services/">Hearing Aid Services</a>
+              </>
+            )}
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>

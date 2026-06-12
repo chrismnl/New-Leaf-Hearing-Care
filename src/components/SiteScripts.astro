@@ -1,0 +1,992 @@
+<script is:inline>
+
+      (() => {
+        const preloader = document.querySelector(".page-preloader");
+        if (!preloader) return;
+
+        const hidePreloader = () => {
+          preloader.classList.add("is-hidden");
+          window.setTimeout(() => {
+            preloader.remove();
+          }, 450);
+        };
+
+        if (document.readyState === "complete") {
+          hidePreloader();
+        } else {
+          window.addEventListener("load", hidePreloader, { once: true });
+        }
+      })();
+
+      (() => {
+        const header = document.querySelector(".site-header");
+        const toggle = document.querySelector(".menu-toggle");
+        const nav = document.querySelector(".main-nav");
+        if (!header || !toggle || !nav) return;
+
+        const responsiveQuery = window.matchMedia("(max-width: 1024px)");
+        const menuItems = Array.from(nav.querySelectorAll(".main-nav__item--has-menu"));
+        const flyoutItems = Array.from(nav.querySelectorAll(".mega-menu__flyout-item"));
+
+        const closeFlyouts = (scope = nav, exceptItem = null) => {
+          Array.from(scope.querySelectorAll(".mega-menu__flyout-item")).forEach((item) => {
+            if (item === exceptItem) return;
+            item.classList.remove("is-flyout-open");
+            const trigger = item.querySelector(":scope > .mega-menu__flyout-trigger");
+            const toggleButton = item.querySelector(":scope > .mega-menu__flyout-toggle");
+            if (trigger) trigger.setAttribute("aria-expanded", "false");
+            if (toggleButton) toggleButton.setAttribute("aria-expanded", "false");
+          });
+        };
+
+        const closeSubmenus = (exceptItem = null) => {
+          menuItems.forEach((item) => {
+            if (item === exceptItem) return;
+            item.classList.remove("is-submenu-open");
+            closeFlyouts(item);
+            const toggleButton = item.querySelector(":scope > .main-nav__submenu-toggle");
+            if (toggleButton) toggleButton.setAttribute("aria-expanded", "false");
+          });
+        };
+
+        const setMenu = (isOpen) => {
+          header.classList.toggle("is-menu-open", isOpen);
+          toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+          toggle.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+          if (!isOpen) closeSubmenus();
+        };
+
+        menuItems.forEach((item) => {
+          const label = item.querySelector(":scope > .main-nav__link, :scope > .main-nav__button");
+          const toggleButton = item.querySelector(":scope > .main-nav__submenu-toggle");
+          if (!toggleButton) return;
+          const labelText = label ? label.textContent.trim() : "submenu";
+          toggleButton.setAttribute("aria-label", `Toggle ${labelText} submenu`);
+          toggleButton.setAttribute("aria-expanded", "false");
+
+          toggleButton.addEventListener("click", (event) => {
+            if (!responsiveQuery.matches) return;
+            event.preventDefault();
+            event.stopPropagation();
+            const shouldOpen = !item.classList.contains("is-submenu-open");
+            closeSubmenus(item);
+            item.classList.toggle("is-submenu-open", shouldOpen);
+            toggleButton.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+            if (!shouldOpen) closeFlyouts(item);
+          });
+        });
+
+        flyoutItems.forEach((item) => {
+          const trigger = item.querySelector(":scope > .mega-menu__flyout-trigger");
+          const toggleButton = item.querySelector(":scope > .mega-menu__flyout-toggle");
+          if (!trigger || !toggleButton) return;
+          trigger.setAttribute("aria-expanded", "false");
+          toggleButton.setAttribute("aria-expanded", "false");
+
+          toggleButton.addEventListener("click", (event) => {
+            if (!responsiveQuery.matches) return;
+            event.preventDefault();
+            event.stopPropagation();
+            const parentMenu = item.closest(".mega-menu");
+            const shouldOpen = !item.classList.contains("is-flyout-open");
+            closeFlyouts(parentMenu || nav, item);
+            item.classList.toggle("is-flyout-open", shouldOpen);
+            trigger.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+            toggleButton.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+          });
+        });
+
+        toggle.addEventListener("click", () => {
+          setMenu(!header.classList.contains("is-menu-open"));
+        });
+
+        nav.addEventListener("click", (event) => {
+          const link = event.target.closest("a");
+          if (!link || !nav.contains(link)) return;
+          setMenu(false);
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!header.contains(event.target)) setMenu(false);
+        });
+
+        window.addEventListener("resize", () => {
+          if (!responsiveQuery.matches) {
+            setMenu(false);
+          } else {
+            closeSubmenus();
+          }
+        });
+      })();
+
+      (() => {
+        const setupCarousel = (rootSelector, trackSelector, cardSelector, previousSelector, nextSelector, getVisibleCount) => {
+          const root = document.querySelector(rootSelector);
+          if (!root) return;
+
+          const track = root.querySelector(trackSelector);
+          const originalCards = track ? Array.from(track.children) : [];
+          const previousButton = root.querySelector(previousSelector);
+          const nextButton = root.querySelector(nextSelector);
+          if (!track || !originalCards.length || !previousButton || !nextButton) return;
+
+          let position = 0;
+          let visibleCount = 0;
+          let isAnimating = false;
+
+          const getGap = () => parseFloat(window.getComputedStyle(track).columnGap) || 0;
+
+          const setTrackPosition = (animate = true) => {
+            const activeCard = track.querySelector(cardSelector);
+            if (!activeCard) return;
+
+            track.classList.toggle("is-resetting", !animate);
+            const offset = position * (activeCard.getBoundingClientRect().width + getGap());
+            track.style.transform = `translateX(-${offset}px)`;
+
+            if (!animate) {
+              track.getBoundingClientRect();
+              window.requestAnimationFrame(() => {
+                track.classList.remove("is-resetting");
+              });
+            }
+          };
+
+          const buildLoop = () => {
+            visibleCount = getVisibleCount();
+            track.replaceChildren(...originalCards);
+
+            const beforeClones = originalCards.slice(-visibleCount).map((card) => {
+              const clone = card.cloneNode(true);
+              clone.setAttribute("aria-hidden", "true");
+              return clone;
+            });
+
+            const afterClones = originalCards.slice(0, visibleCount).map((card) => {
+              const clone = card.cloneNode(true);
+              clone.setAttribute("aria-hidden", "true");
+              return clone;
+            });
+
+            track.prepend(...beforeClones);
+            track.append(...afterClones);
+            position = visibleCount;
+            isAnimating = false;
+            setTrackPosition(false);
+          };
+
+          previousButton.addEventListener("click", () => {
+            if (isAnimating) return;
+            isAnimating = true;
+            position -= 1;
+            setTrackPosition();
+          });
+
+          nextButton.addEventListener("click", () => {
+            if (isAnimating) return;
+            isAnimating = true;
+            position += 1;
+            setTrackPosition();
+          });
+
+          track.addEventListener("transitionend", (event) => {
+            if (event.target !== track || event.propertyName !== "transform") return;
+
+            if (position <= 0) {
+              position = originalCards.length;
+              setTrackPosition(false);
+            }
+
+            if (position >= originalCards.length + visibleCount) {
+              position = visibleCount;
+              setTrackPosition(false);
+            }
+
+            isAnimating = false;
+          });
+
+          window.addEventListener("resize", buildLoop);
+          buildLoop();
+        };
+
+        setupCarousel(
+          ".healthy-hearing-benefits-container",
+          ".healthy-hearing-benefits-track",
+          ".healthy-hearing-benefit-card",
+          "[data-healthy-benefits-prev]",
+          "[data-healthy-benefits-next]",
+          () => 1
+        );
+
+        setupCarousel(
+          "#wellness-carousel",
+          ".about-wellness-carousel-track",
+          ".about-wellness-card",
+          "[data-about-wellness-prev]",
+          "[data-about-wellness-next]",
+          () => (window.matchMedia("(min-width: 1025px)").matches ? 2 : 1)
+        );
+      })();
+
+      (() => {
+        const locationCard = document.querySelector(".location-card");
+        if (!locationCard) return;
+
+        const tabs = Array.from(locationCard.querySelectorAll("[data-location-tab]"));
+        const panels = Array.from(locationCard.querySelectorAll(".location-panel"));
+        if (!tabs.length || !panels.length) return;
+
+        const activate = (panelId) => {
+          tabs.forEach((tab) => {
+            const isActive = tab.dataset.locationTab === panelId;
+            tab.classList.toggle("location-tab--active", isActive);
+            tab.setAttribute("aria-selected", isActive ? "true" : "false");
+          });
+
+          panels.forEach((panel) => {
+            panel.classList.toggle("location-panel--active", panel.id === panelId);
+          });
+        };
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => activate(tab.dataset.locationTab));
+        });
+      })();
+
+      (() => {
+        const schedule = document.querySelector(".schedule-embed-container");
+        if (!schedule) return;
+
+        const tabs = Array.from(schedule.querySelectorAll("[data-schedule-tab]"));
+        const panels = Array.from(schedule.querySelectorAll(".schedule-embed-panel"));
+        if (!tabs.length || !panels.length) return;
+
+        const activate = (panelId) => {
+          tabs.forEach((tab) => {
+            const isActive = tab.dataset.scheduleTab === panelId;
+            tab.classList.toggle("schedule-tab--active", isActive);
+            tab.setAttribute("aria-selected", isActive ? "true" : "false");
+          });
+
+          panels.forEach((panel) => {
+            const isActive = panel.id === panelId;
+            panel.classList.toggle("schedule-embed-panel--active", isActive);
+            panel.hidden = !isActive;
+          });
+        };
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => activate(tab.dataset.scheduleTab));
+        });
+      })();
+
+      (() => {
+        const carousel = document.getElementById("wellness-carousel");
+        if (!carousel) return;
+
+        const currentImage = document.getElementById("wellness-carousel-image-current");
+        const nextImage = document.getElementById("wellness-carousel-image-next");
+        const steps = Array.from(carousel.querySelectorAll(".wellness-list li"));
+        const dots = Array.from(carousel.querySelectorAll(".wellness-dots button"));
+        if (!currentImage || !nextImage || !steps.length || !dots.length) return;
+        const frames = [
+          "/assets/new-leaf-hearing-care-wellness-tree-01.webp",
+          "/assets/new-leaf-hearing-care-wellness-tree-02.webp",
+          "/assets/new-leaf-hearing-care-wellness-tree-03.webp",
+          "/assets/new-leaf-hearing-care-wellness-tree-04.webp",
+          "/assets/new-leaf-hearing-care-wellness-tree-05.webp",
+          "/assets/new-leaf-hearing-care-wellness-tree-full.webp"
+        ];
+
+        let current = 0;
+        const transitionMs = 500;
+
+        const setImage = (index, animate = true) => {
+          const nextSrc = frames[index];
+          if (!animate) {
+            currentImage.src = nextSrc;
+            nextImage.src = nextSrc;
+            nextImage.classList.remove("is-visible");
+            return;
+          }
+          nextImage.src = nextSrc;
+          window.requestAnimationFrame(() => {
+            nextImage.classList.add("is-visible");
+          });
+          window.setTimeout(() => {
+            currentImage.src = nextSrc;
+            nextImage.classList.remove("is-visible");
+          }, transitionMs + 20);
+        };
+
+        const render = (index, animate = true) => {
+          setImage(index, animate);
+          steps.forEach((step, stepIndex) => {
+            step.classList.toggle("is-active", stepIndex <= index);
+          });
+          dots.forEach((dot, dotIndex) => {
+            dot.classList.toggle("is-active", dotIndex === index);
+            dot.setAttribute("aria-current", dotIndex === index ? "true" : "false");
+          });
+        };
+
+        render(current, false);
+        let timer = window.setInterval(() => {
+          current = (current + 1) % frames.length;
+          render(current);
+        }, 2500);
+
+        dots.forEach((dot, index) => {
+          dot.addEventListener("click", () => {
+            current = index;
+            render(current);
+            window.clearInterval(timer);
+            timer = window.setInterval(() => {
+              current = (current + 1) % frames.length;
+              render(current);
+            }, 2500);
+          });
+        });
+      })();
+
+      (() => {
+        const section = document.querySelector(".team-section");
+        if (!section) return;
+
+        const track = section.querySelector(".team-track");
+        const originalCards = Array.from(section.querySelectorAll(".team-card"));
+        const previousButton = section.querySelector("[data-team-prev]");
+        const nextButton = section.querySelector("[data-team-next]");
+        if (!track || !originalCards.length || !previousButton || !nextButton) return;
+
+        let position = 0;
+        let visibleCount = 4;
+        let isAnimating = false;
+
+        const getVisibleCount = () => {
+          if (window.matchMedia("(min-width: 1025px) and (max-width: 1366px)").matches) return 4;
+          if (window.matchMedia("(min-width: 768px) and (max-width: 1024px)").matches) return 2;
+          if (window.matchMedia("(max-width: 767px)").matches) return 1;
+          return originalCards.length;
+        };
+        const getGap = () => parseFloat(window.getComputedStyle(track).columnGap) || 0;
+
+        const setTrackPosition = (animate = true) => {
+          const activeCard = track.querySelector(".team-card");
+          if (!activeCard) return;
+
+          track.classList.toggle("is-resetting", !animate);
+          const offset = position * (activeCard.getBoundingClientRect().width + getGap());
+          track.style.transform = `translateX(-${offset}px)`;
+
+          if (!animate) {
+            track.getBoundingClientRect();
+            window.requestAnimationFrame(() => {
+              track.classList.remove("is-resetting");
+            });
+          }
+        };
+
+        const buildLoop = () => {
+          visibleCount = getVisibleCount();
+          track.replaceChildren(...originalCards);
+
+          if (!window.matchMedia("(max-width: 1366px)").matches) {
+            position = 0;
+            track.style.transform = "";
+            return;
+          }
+
+          const beforeClones = originalCards.slice(-visibleCount).map((card) => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute("aria-hidden", "true");
+            return clone;
+          });
+
+          const afterClones = originalCards.slice(0, visibleCount).map((card) => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute("aria-hidden", "true");
+            return clone;
+          });
+
+          track.prepend(...beforeClones);
+          track.append(...afterClones);
+          position = visibleCount;
+          setTrackPosition(false);
+        };
+
+        previousButton.addEventListener("click", () => {
+          if (isAnimating) return;
+          isAnimating = true;
+          position -= 1;
+          setTrackPosition();
+        });
+
+        nextButton.addEventListener("click", () => {
+          if (isAnimating) return;
+          isAnimating = true;
+          position += 1;
+          setTrackPosition();
+        });
+
+        track.addEventListener("transitionend", (event) => {
+          if (event.target !== track || event.propertyName !== "transform") return;
+
+          if (position <= 0) {
+            position = originalCards.length;
+            setTrackPosition(false);
+          }
+
+          if (position >= originalCards.length + visibleCount) {
+            position = visibleCount;
+            setTrackPosition(false);
+          }
+
+          isAnimating = false;
+        });
+
+        window.addEventListener("resize", buildLoop);
+        buildLoop();
+      })();
+
+      (() => {
+        const carousel = document.querySelector(".audiology-services-section");
+        if (!carousel) return;
+
+        const track = carousel.querySelector(".audiology-services-track");
+        const originalCards = Array.from(carousel.querySelectorAll(".audiology-service-card"));
+        const previousButton = carousel.querySelector("[data-audiology-services-prev]");
+        const nextButton = carousel.querySelector("[data-audiology-services-next]");
+        if (!track || !originalCards.length || !previousButton || !nextButton) return;
+
+        let position = 0;
+        let visibleCount = 0;
+        let isAnimating = false;
+
+        const getVisibleCount = () => (window.matchMedia("(min-width: 1025px)").matches ? 2 : 1);
+        const getGap = () => parseFloat(window.getComputedStyle(track).columnGap) || 0;
+
+        const setTrackPosition = (animate = true) => {
+          const activeCard = track.querySelector(".audiology-service-card");
+          if (!activeCard) return;
+
+          if (animate) {
+            track.classList.remove("is-resetting");
+          } else {
+            track.classList.add("is-resetting");
+          }
+
+          const offset = position * (activeCard.getBoundingClientRect().width + getGap());
+          track.style.transform = `translateX(-${offset}px)`;
+
+          if (!animate) {
+            track.getBoundingClientRect();
+            window.requestAnimationFrame(() => {
+              track.classList.remove("is-resetting");
+            });
+          }
+        };
+
+        const buildLoop = () => {
+          visibleCount = getVisibleCount();
+          track.replaceChildren(...originalCards);
+
+          const beforeClones = originalCards.slice(-visibleCount).map((card) => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute("aria-hidden", "true");
+            return clone;
+          });
+
+          const afterClones = originalCards.slice(0, visibleCount).map((card) => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute("aria-hidden", "true");
+            return clone;
+          });
+
+          track.prepend(...beforeClones);
+          track.append(...afterClones);
+          position = visibleCount;
+          setTrackPosition(false);
+        };
+
+        previousButton.addEventListener("click", () => {
+          if (isAnimating) return;
+          isAnimating = true;
+          position -= 1;
+          setTrackPosition();
+        });
+
+        nextButton.addEventListener("click", () => {
+          if (isAnimating) return;
+          isAnimating = true;
+          position += 1;
+          setTrackPosition();
+        });
+
+        track.addEventListener("transitionend", (event) => {
+          if (event.target !== track || event.propertyName !== "transform") return;
+
+          if (position <= 0) {
+            position = originalCards.length;
+            setTrackPosition(false);
+          }
+
+          if (position >= originalCards.length + visibleCount) {
+            position = visibleCount;
+            setTrackPosition(false);
+          }
+
+          isAnimating = false;
+        });
+
+        window.addEventListener("resize", buildLoop);
+        buildLoop();
+      })();
+
+      (() => {
+        const carousel = document.querySelector(".blog-post-section");
+        if (!carousel) return;
+
+        const track = carousel.querySelector(".blog-post-list");
+        const originalCards = Array.from(carousel.querySelectorAll(".blog-post-card"));
+        const previousButton = carousel.querySelector("[data-blog-post-prev]");
+        const nextButton = carousel.querySelector("[data-blog-post-next]");
+        if (!carousel.classList.contains("has-carousel") || !track || !originalCards.length || !previousButton || !nextButton) return;
+
+        let position = 0;
+        let visibleCount = 0;
+        let isAnimating = false;
+
+        const getGap = () => parseFloat(window.getComputedStyle(track).columnGap) || 0;
+
+        const setTrackPosition = (animate = true) => {
+          const activeCard = track.querySelector(".blog-post-card");
+          if (!activeCard) return;
+
+          if (animate) {
+            track.classList.remove("is-resetting");
+          } else {
+            track.classList.add("is-resetting");
+          }
+
+          const offset = position * (activeCard.getBoundingClientRect().width + getGap());
+          track.style.transform = `translateX(-${offset}px)`;
+
+          if (!animate) {
+            track.getBoundingClientRect();
+            window.requestAnimationFrame(() => {
+              track.classList.remove("is-resetting");
+            });
+          }
+        };
+
+        const buildLoop = () => {
+          track.replaceChildren(...originalCards);
+          isAnimating = false;
+
+          visibleCount = window.matchMedia("(max-width: 767px)").matches
+            ? 1
+            : window.matchMedia("(max-width: 1024px)").matches
+              ? 2
+              : 3;
+
+          const beforeClones = originalCards.slice(-visibleCount).map((card) => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute("aria-hidden", "true");
+            return clone;
+          });
+
+          const afterClones = originalCards.slice(0, visibleCount).map((card) => {
+            const clone = card.cloneNode(true);
+            clone.setAttribute("aria-hidden", "true");
+            return clone;
+          });
+
+          track.prepend(...beforeClones);
+          track.append(...afterClones);
+          position = visibleCount;
+          setTrackPosition(false);
+        };
+
+        previousButton.addEventListener("click", () => {
+          if (isAnimating) return;
+          isAnimating = true;
+          position -= 1;
+          setTrackPosition();
+        });
+
+        nextButton.addEventListener("click", () => {
+          if (isAnimating) return;
+          isAnimating = true;
+          position += 1;
+          setTrackPosition();
+        });
+
+        track.addEventListener("transitionend", (event) => {
+          if (event.target !== track || event.propertyName !== "transform") return;
+
+          if (position <= 0) {
+            position = originalCards.length;
+            setTrackPosition(false);
+          }
+
+          if (position >= originalCards.length + visibleCount) {
+            position = visibleCount;
+            setTrackPosition(false);
+          }
+
+          isAnimating = false;
+        });
+
+        window.addEventListener("resize", buildLoop);
+        buildLoop();
+      })();
+
+      (() => {
+        const section = document.querySelector(".hearing-aids-protection-section");
+        if (!section) return;
+
+        const tabs = Array.from(section.querySelectorAll("[data-hearing-solution-tab]"));
+        const panels = Array.from(section.querySelectorAll("[data-hearing-solution-panel]"));
+        if (!tabs.length || !panels.length) return;
+
+        const activate = (target) => {
+          tabs.forEach((tab) => {
+            const isActive = tab.dataset.hearingSolutionTab === target;
+            tab.classList.toggle("is-active", isActive);
+            tab.setAttribute("aria-selected", isActive ? "true" : "false");
+          });
+
+          panels.forEach((panel) => {
+            const isActive = panel.dataset.hearingSolutionPanel === target;
+            panel.classList.toggle("is-active", isActive);
+            panel.hidden = !isActive;
+          });
+        };
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            activate(tab.dataset.hearingSolutionTab);
+          });
+        });
+      })();
+
+      (() => {
+        const articles = Array.from(document.querySelectorAll(".internal-article, .blog-entry-page--hearing-doctor .internal-article-content"));
+        if (!articles.length) return;
+
+        const slugify = (value) => String(value || "")
+          .toLowerCase()
+          .replace(/&/g, " and ")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
+        const getNodesUntil = (startNode, stopSelector) => {
+          const nodes = [];
+          let node = startNode.nextElementSibling;
+
+          while (node && !node.matches(stopSelector)) {
+            nodes.push(node);
+            node = node.nextElementSibling;
+          }
+
+          return nodes;
+        };
+
+        const createAccordion = (heading, contentNodes) => {
+          const details = document.createElement("details");
+          details.className = "internal-subaccordion internal-accordion";
+
+          const summary = document.createElement("summary");
+          const icon = document.createElement("span");
+          icon.className = "internal-accordion__icon";
+          icon.setAttribute("aria-hidden", "true");
+          icon.textContent = "+";
+
+          summary.append(heading);
+          summary.append(icon);
+
+          const content = document.createElement("div");
+          content.className = "internal-accordion__content";
+          contentNodes.forEach((node) => content.append(node));
+
+          details.append(summary);
+          details.append(content);
+
+          return details;
+        };
+
+        const convertChildHeadings = (parentHeading, childSelector, nextParentSelector) => {
+          const childHeadings = getNodesUntil(parentHeading, nextParentSelector)
+            .filter((node) => node.matches(childSelector));
+
+          if (childHeadings.length <= 1) return;
+
+          const group = document.createElement("div");
+          group.className = "internal-accordion-group";
+
+          childHeadings.forEach((heading) => {
+            const contentNodes = getNodesUntil(heading, `${childSelector}, ${nextParentSelector}`);
+            group.append(createAccordion(heading, contentNodes));
+          });
+
+          parentHeading.after(group);
+        };
+
+        const buildArticleToc = (article) => {
+          const memberSummary = article.closest(".member-top")?.querySelector(".member-profile__summary");
+          if (article.querySelector(".toc-container") || memberSummary?.querySelector(".toc-container")) return;
+
+          const headings = Array.from(article.querySelectorAll("h2, h3, h4"));
+          if (headings.filter((heading) => heading.tagName === "H2").length < 2) return;
+
+          const toc = document.createElement("div");
+          toc.className = "toc-container";
+          toc.innerHTML = '<details class="toc-accordion internal-accordion"><summary><span>Table of Contents</span><span class="toc-accordion__icon" aria-hidden="true">+</span></summary><nav class="toc-accordion__content" aria-label="Table of contents"></nav></details>';
+
+          const nav = toc.querySelector("nav");
+          headings.forEach((heading) => {
+            if (!heading.id) heading.id = slugify(heading.textContent);
+
+            const link = document.createElement("a");
+            link.className = `toc-link toc-link--${heading.tagName.toLowerCase()}`;
+            link.href = `#${heading.id}`;
+            link.textContent = heading.textContent;
+            nav.append(link);
+          });
+
+          if (memberSummary) {
+            memberSummary.append(toc);
+            return;
+          }
+
+          const firstH2 = article.querySelector("h2");
+          if (firstH2) article.insertBefore(toc, firstH2);
+        };
+
+        articles.forEach((article) => {
+          if (!article.querySelector("h2, h3, h4")) return;
+          if (article.classList.contains("internal-article") && !article.querySelector(".internal-accordion-group")) {
+            Array.from(article.querySelectorAll("h3")).forEach((heading) => {
+              convertChildHeadings(heading, "h4", "h2, h3");
+            });
+
+            Array.from(article.querySelectorAll("h2")).forEach((heading) => {
+              convertChildHeadings(heading, "h3", "h2");
+            });
+          }
+
+          buildArticleToc(article);
+        });
+      })();
+
+      (() => {
+        const header = document.querySelector(".site-header");
+
+        const updateInternalAnchorOffset = () => {
+          if (!header) return;
+          document.documentElement.style.setProperty("--internal-anchor-offset", `${header.offsetHeight + 30}px`);
+        };
+
+        updateInternalAnchorOffset();
+        window.addEventListener("resize", updateInternalAnchorOffset);
+
+        if ("ResizeObserver" in window && header) {
+          const observer = new ResizeObserver(updateInternalAnchorOffset);
+          observer.observe(header);
+        }
+      })();
+
+      (() => {
+        const tocLinks = Array.from(document.querySelectorAll(".toc-link"));
+        if (!tocLinks.length) return;
+
+        const getAnchorOffset = () => {
+          const value = getComputedStyle(document.documentElement).getPropertyValue("--internal-anchor-offset");
+          return Number.parseFloat(value) || 0;
+        };
+
+        tocLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            const targetId = link.getAttribute("href")?.replace("#", "");
+            if (!targetId) return;
+
+            const target = document.getElementById(targetId);
+            if (!target) return;
+
+            event.preventDefault();
+
+            const top = target.getBoundingClientRect().top + window.scrollY - getAnchorOffset();
+            window.scrollTo({
+              top,
+              behavior: "smooth"
+            });
+          });
+        });
+      })();
+
+      (() => {
+        const accordions = Array.from(document.querySelectorAll(".internal-accordion"));
+        if (!accordions.length) return;
+
+        const animationDuration = 300;
+        const animations = new WeakMap();
+
+        const animateAccordion = (accordion, shouldOpen) => {
+          const summary = accordion.querySelector("summary");
+          if (!summary) return;
+
+          const currentAnimation = animations.get(accordion);
+          if (currentAnimation) currentAnimation.cancel();
+
+          const startHeight = `${accordion.offsetHeight}px`;
+          accordion.style.overflow = "hidden";
+
+          if (shouldOpen) {
+            accordion.open = true;
+          }
+
+          const endHeight = shouldOpen ? `${accordion.offsetHeight}px` : `${summary.offsetHeight}px`;
+          accordion.style.height = startHeight;
+
+          const animation = accordion.animate(
+            { height: [startHeight, endHeight] },
+            { duration: animationDuration, easing: "ease" }
+          );
+
+          animations.set(accordion, animation);
+
+          animation.onfinish = () => {
+            if (!shouldOpen) {
+              accordion.open = false;
+            }
+
+            accordion.style.height = "";
+            accordion.style.overflow = "";
+            animations.delete(accordion);
+          };
+
+          animation.oncancel = () => {
+            animations.delete(accordion);
+          };
+        };
+
+        accordions.forEach((accordion) => {
+          const summary = accordion.querySelector("summary");
+          if (!summary) return;
+
+          summary.addEventListener("click", (event) => {
+            event.preventDefault();
+            const shouldOpen = !accordion.open;
+            const group = accordion.closest(".internal-accordion-group");
+            const groupAccordions = group
+              ? Array.from(group.querySelectorAll(".internal-accordion"))
+              : [accordion];
+
+            groupAccordions.forEach((otherAccordion) => {
+              if (otherAccordion !== accordion && otherAccordion.open) {
+                animateAccordion(otherAccordion, false);
+              }
+            });
+
+            animateAccordion(accordion, shouldOpen);
+          });
+        });
+      })();
+
+      (() => {
+        const faqItems = Array.from(document.querySelectorAll(".faq-item"));
+        if (!faqItems.length) return;
+
+        const animationDuration = 300;
+        const animations = new WeakMap();
+
+        const animateItem = (item, shouldOpen) => {
+          const summary = item.querySelector("summary");
+          if (!summary) return;
+
+          const currentAnimation = animations.get(item);
+          if (currentAnimation) currentAnimation.cancel();
+
+          const startHeight = `${item.offsetHeight}px`;
+          item.style.overflow = "hidden";
+
+          if (shouldOpen) {
+            item.open = true;
+          }
+
+          const endHeight = shouldOpen ? `${item.offsetHeight}px` : `${summary.offsetHeight}px`;
+          item.style.height = startHeight;
+
+          const animation = item.animate(
+            { height: [startHeight, endHeight] },
+            { duration: animationDuration, easing: "ease" }
+          );
+
+          animations.set(item, animation);
+
+          animation.onfinish = () => {
+            if (!shouldOpen) {
+              item.open = false;
+            }
+
+            item.style.height = "";
+            item.style.overflow = "";
+            animations.delete(item);
+          };
+
+          animation.oncancel = () => {
+            animations.delete(item);
+          };
+        };
+
+        faqItems.forEach((item) => {
+          const summary = item.querySelector("summary");
+          if (!summary) return;
+
+          summary.addEventListener("click", (event) => {
+            event.preventDefault();
+            const shouldOpen = !item.open;
+
+            faqItems.forEach((otherItem) => {
+              if (otherItem !== item && otherItem.open) {
+                animateItem(otherItem, false);
+              }
+            });
+
+            animateItem(item, shouldOpen);
+          });
+        });
+      })();
+    
+
+(() => {
+  const articles = Array.from(document.querySelectorAll(".internal-article"));
+  articles.forEach((article) => {
+    const memberSummary = article.closest(".member-top")?.querySelector(".member-profile__summary");
+    if (article.querySelector(".toc-container") || memberSummary?.querySelector(".toc-container")) return;
+    const headings = Array.from(article.querySelectorAll("h2, h3"));
+    if (headings.filter((heading) => heading.tagName === "H2").length < 2) return;
+    const toc = document.createElement("div");
+    toc.className = "toc-container";
+    toc.innerHTML = '<details class="toc-accordion internal-accordion"><summary><span>Table of Contents</span><span class="toc-accordion__icon" aria-hidden="true">+</span></summary><nav class="toc-accordion__content" aria-label="Table of contents"></nav></details>';
+    const nav = toc.querySelector("nav");
+    headings.forEach((heading) => {
+      if (!heading.id) heading.id = heading.textContent.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      const link = document.createElement("a");
+      link.className = "toc-link toc-link--" + heading.tagName.toLowerCase();
+      link.href = "#" + heading.id;
+      link.textContent = heading.textContent;
+      nav.append(link);
+    });
+    if (memberSummary) {
+      memberSummary.append(toc);
+      return;
+    }
+
+    const firstH2 = article.querySelector("h2");
+    if (firstH2) article.insertBefore(toc, firstH2);
+  });
+})();
+
+</script>

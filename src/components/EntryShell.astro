@@ -1,0 +1,11 @@
+---
+import PortableRichText from "./PortableRichText.astro";
+const { shell = "", introContent = [], content = [] } = Astro.props;
+const [beforeIntro = "", afterIntroRaw = ""] = shell.split("<!--EMDASH_INTRO_CONTENT-->");
+const [between = "", afterContent = ""] = afterIntroRaw.split("<!--EMDASH_MAIN_CONTENT-->");
+---
+<Fragment set:html={beforeIntro} />
+<PortableRichText value={introContent} />
+<Fragment set:html={between} />
+<PortableRichText value={content} />
+<Fragment set:html={afterContent} />

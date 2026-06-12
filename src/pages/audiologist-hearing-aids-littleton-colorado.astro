@@ -1,0 +1,8 @@
+---
+import Base from "../layouts/Base.astro";
+import pageHtml from "../content-shells/static/audiologist-hearing-aids-littleton-colorado.html?raw";
+export const cacheHint = 3600;
+---
+<Base title="New Leaf Hearing Care | Audiologists and Hearing Aids in Littleton, CO" description="New Leaf Hearing Care provides expert hearing care and hearing aids in Littleton, CO.">
+  <Fragment set:html={pageHtml} />
+</Base>

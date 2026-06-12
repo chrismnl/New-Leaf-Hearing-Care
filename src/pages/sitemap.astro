@@ -1,0 +1,8 @@
+---
+import Base from "../layouts/Base.astro";
+import pageHtml from "../content-shells/static/sitemap.html?raw";
+export const cacheHint = 3600;
+---
+<Base title="Sitemap | New Leaf Hearing Care" description="Sitemap for New Leaf Hearing Care.">
+  <Fragment set:html={pageHtml} />
+</Base>

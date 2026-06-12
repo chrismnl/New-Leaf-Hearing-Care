@@ -1,0 +1,105 @@
+---
+const { posts = [] } = Astro.props;
+const shouldShowControls = posts.length > 3;
+
+const stripHtml = (value) => String(value ?? "").replace(/<[^>]*>/g, " ");
+
+const plainTextFromPortableText = (blocks = []) => blocks
+  .flatMap((block) => Array.isArray(block?.children) ? block.children : [])
+  .map((child) => child?.text || "")
+  .join(" ")
+  .replace(/\s+/g, " ")
+  .trim();
+
+const excerpt = (post) => {
+  const source = post.data.meta_description || plainTextFromPortableText(post.data.content || []);
+  if (!source) return "";
+  return source.length > 120 ? `${source.slice(0, 117).trim()}...` : source;
+};
+
+const normalizeSlug = (post) => {
+  const raw = post.slug || post.data.slug || post.data.page_slug || post.id || "";
+  return String(raw).replace(/^\/+|\/+$/g, "").replace(/^blog\//, "");
+};
+
+const hrefFor = (post) => `/${normalizeSlug(post)}/`;
+
+const imageFor = (post) => {
+  const image = post.data.featured_image;
+  if (!image) return {
+    src: "/assets/new-leaf-hearing-care-logo.webp",
+    alt: post.data.title || post.data.page_title || "New Leaf Hearing Care"
+  };
+
+  if (typeof image === "string") return {
+    src: image,
+    alt: post.data.title || post.data.page_title || ""
+  };
+
+  return {
+    src: image.src || image.url || (image.filename ? `/assets/${image.filename}` : ""),
+    alt: image.alt || post.data.title || post.data.page_title || ""
+  };
+};
+
+const parseDate = (post) => {
+  const raw = post.data.displayed_publish_date || post.data.publishedAt || post.data.createdAt;
+  const date = raw instanceof Date ? raw : new Date(raw);
+  if (Number.isNaN(date.getTime())) return null;
+  return date;
+};
+
+const monthFor = (date) => date.toLocaleString("en-US", { month: "short" });
+const isoDate = (date) => date.toISOString().slice(0, 10);
+---
+
+{posts.length > 0 && (
+<section class={`blog-post-section ${shouldShowControls ? "has-carousel" : ""}`} id="blog-posts" aria-labelledby="blog-post-heading">
+        <div class="blog-post-container">
+          <div class="blog-post-header">
+            <div class="blog-post-heading heading-group">
+              <p class="eyebrow">News &amp; Articles</p>
+              <h2 id="blog-post-heading" class="section-title">From the Experts</h2>
+            </div>
+
+            <div class="blog-post-controls" aria-label="Blog post carousel controls" hidden={!shouldShowControls}>
+              <button class="blog-post-nav" type="button" aria-label="Previous post" data-blog-post-prev>
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="M19 12H5m0 0 6-6m-6 6 6 6" />
+                </svg>
+              </button>
+              <button class="blog-post-nav" type="button" aria-label="Next post" data-blog-post-next>
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="M5 12h14m0 0-6-6m6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="blog-post-carousel">
+            <div class="blog-post-list">
+              {posts.map((post) => {
+                const image = imageFor(post);
+                const date = parseDate(post);
+                const tags = String(post.data.displayed_tags || "News").split(",").map((tag) => tag.trim()).filter(Boolean);
+                const title = post.data.title || post.data.page_title || post.data.meta_title || "Blog Post";
+                return (
+              <article class="blog-post-card">
+                <figure class="blog-post-card__media">
+                  {image.src && <img src={image.src} alt={image.alt} loading="lazy" decoding="async" />}
+                  <span class="blog-post-card__tag">{tags[0]}</span>
+                  {date && <time class="blog-post-card__date" datetime={isoDate(date)}><strong>{date.getDate()}</strong><span>{monthFor(date)}</span></time>}
+                </figure>
+                <div class="blog-post-card__content">
+                  <h3>{title}</h3>
+                  {excerpt(post) && <p>{stripHtml(excerpt(post))}</p>}
+                  <a class="btn btn-outline-purple" href={hrefFor(post)}>Read More</a>
+                </div>
+              </article>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+)}

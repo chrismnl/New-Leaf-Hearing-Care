@@ -1,0 +1,18 @@
+---
+import { getEmDashCollection } from "emdash";
+import Base from "../layouts/Base.astro";
+import BlogPostSection from "../components/sections/BlogPostSection.astro";
+import pageHtml from "../content-shells/static/index.html?raw";
+export const cacheHint = 3600;
+
+const { entries: blogPosts } = await getEmDashCollection("blog_posts", {
+  status: "published",
+  orderBy: { published_at: "desc" }
+});
+const [beforeBlogPosts, afterBlogPosts = ""] = pageHtml.split("<!-- BLOG_POST_SECTION -->");
+---
+<Base title="New Leaf Hearing Care | Audiologist & Hearing Aids in Colorado" description="New Leaf Hearing Care is an audiology and hearing aid clinic with expert audiologists providing hearing tests and professional hearing services in Arvada, CO and Littleton, CO.">
+  <Fragment set:html={beforeBlogPosts} />
+  <BlogPostSection posts={blogPosts} />
+  <Fragment set:html={afterBlogPosts} />
+</Base>

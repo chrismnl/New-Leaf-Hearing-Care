@@ -1,0 +1,48 @@
+---
+import { getEmDashEntry } from "emdash";
+import Base from "../layouts/Base.astro";
+import EntryShell from "../components/EntryShell.astro";
+import GenericEntryPage from "../components/GenericEntryPage.astro";
+import shells from "../data/shells.json";
+
+export const prerender = false;
+export const cacheHint = 3600;
+
+const requestedSlug = (Astro.params.slug || "").replace(/^\/+|\/+$/g, "");
+const shellImports = import.meta.glob("../content-shells/**/*.html", { query: "?raw", import: "default" });
+const collections = ["internal_pages", "hearing_aids", "team", "blog_posts"];
+let entry;
+let collection;
+let shellFile;
+
+if (requestedSlug === "404") {
+  return new Response("Not found", { status: 404 });
+}
+
+for (const candidate of collections) {
+  const lookupSlug = requestedSlug.replace(/^blog\//, "");
+  const result = await getEmDashEntry(candidate, lookupSlug);
+  if (result.entry) {
+    entry = result.entry;
+    collection = candidate;
+    shellFile = shells[candidate]?.[lookupSlug];
+    break;
+  }
+}
+
+if (!entry || !collection) {
+  return Astro.redirect("/404/", 302);
+}
+
+const shellPath = `../content-shells/${collection}/${shellFile}`;
+const loadShell = shellImports[shellPath];
+const shell = loadShell ? await loadShell() : "";
+const data = entry.data;
+---
+<Base title={data.meta_title || data.title || data.page_title} description={data.meta_description || ""}>
+  {shell ? (
+    <EntryShell shell={shell} introContent={data.intro_content || []} content={data.content || []} />
+  ) : (
+    <GenericEntryPage data={data} collection={collection} slug={entry.slug} />
+  )}
+</Base>

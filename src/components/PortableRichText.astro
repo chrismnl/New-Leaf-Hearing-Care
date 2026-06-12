@@ -1,0 +1,58 @@
+---
+const { value = [] } = Astro.props;
+
+const slugify = (value) => String(value || "")
+  .toLowerCase()
+  .replace(/&/g, " and ")
+  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/^-+|-+$/g, "");
+
+const escapeHtml = (value) => String(value ?? "")
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;");
+
+const renderSpans = (children = [], markDefs = []) => children.map((span) => {
+  if (span._type !== "span") return "";
+  let text = escapeHtml(span.text || "");
+  for (const mark of span.marks || []) {
+    const def = markDefs.find((item) => item._key === mark);
+    if (def?._type === "link") text = '<a href="' + escapeHtml(def.href || "#") + '">' + text + '</a>';
+    else if (mark === "strong") text = '<strong>' + text + '</strong>';
+    else if (mark === "em") text = '<em>' + text + '</em>';
+  }
+  return text;
+}).join("");
+
+const html = [];
+let list = null;
+const closeList = () => {
+  if (list) {
+    html.push('</' + list + '>');
+    list = null;
+  }
+};
+
+for (const block of value || []) {
+  if (block._type !== "block") continue;
+  const inner = renderSpans(block.children || [], block.markDefs || []);
+  if (block.listItem) {
+    const tag = block.listItem === "number" ? "ol" : "ul";
+    if (list !== tag) {
+      closeList();
+      list = tag;
+      html.push('<' + tag + '>');
+    }
+    html.push('<li>' + inner + '</li>');
+    continue;
+  }
+  closeList();
+  const style = block.style || "normal";
+  if (/^h[1-6]$/.test(style)) html.push('<' + style + ' id="' + slugify(inner.replace(/<[^>]+>/g, "")) + '">' + inner + '</' + style + '>');
+  else if (style === "blockquote") html.push('<blockquote>' + inner + '</blockquote>');
+  else html.push('<p>' + inner + '</p>');
+}
+closeList();
+---
+<Fragment set:html={html.join("\n")} />
