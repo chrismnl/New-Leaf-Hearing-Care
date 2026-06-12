@@ -1,12 +1,12 @@
 ---
-import { getEmDashCollection } from "emdash";
 import PortableRichText from "./PortableRichText.astro";
+import { getSidebarBlogLinks } from "../utils/sidebarBlogLinks";
 
-const { data, collection, slug } = Astro.props;
+const { data, collection } = Astro.props;
 const title = data.title || data.page_title || "Page";
 const introContent = data.intro_content || [];
 const content = data.content || [];
-const isHearingDoctorBlog = collection === "blog_posts" && slug === "what-does-a-hearing-doctor-audiologist-do";
+const isBlogEntry = collection === "blog_posts";
 
 const getImage = (image) => {
   if (!image) return null;
@@ -19,7 +19,7 @@ const getImage = (image) => {
   };
 };
 
-const featuredImage = isHearingDoctorBlog ? getImage(data.featured_image) : null;
+const featuredImage = isBlogEntry ? getImage(data.featured_image) : null;
 const displayedAuthorName = data.displayed_author_name || "";
 const displayedPublishDate = data.displayed_publish_date || "";
 const displayedTags = data.displayed_tags || "";
@@ -28,25 +28,10 @@ const blogDateTime = blogDate && !Number.isNaN(blogDate.getTime())
   ? blogDate.toISOString().slice(0, 10)
   : undefined;
 
-const normalizeBlogSlug = (entry) => {
-  const raw = entry.slug || entry.data?.slug || entry.data?.page_slug || entry.id || "";
-  return String(raw).replace(/^\/+|\/+$/g, "").replace(/^blog\//, "");
-};
-
-const { entries: sidebarBlogPosts = [] } = isHearingDoctorBlog
-  ? await getEmDashCollection("blog_posts", {
-      status: "published",
-      orderBy: { published_at: "desc" }
-    })
-  : { entries: [] };
-
-const sidebarBlogLinks = sidebarBlogPosts.slice(0, 5).map((entry) => ({
-  href: `/${normalizeBlogSlug(entry)}/`,
-  title: entry.data?.title || entry.data?.page_title || entry.data?.meta_title || "Blog Post"
-}));
+const sidebarBlogLinks = await getSidebarBlogLinks();
 ---
 
-<main class={isHearingDoctorBlog ? "blog-entry-page blog-entry-page--hearing-doctor" : undefined}>
+<main class={isBlogEntry ? "blog-entry-page" : undefined}>
   <section class="internal-hero-section new-leaf-texture-overlay" aria-labelledby="internal-page-heading">
     <div class="internal-hero-container">
       <nav class="eyebrow internal-hero-breadcrumb" aria-label="Breadcrumb">
@@ -55,7 +40,7 @@ const sidebarBlogLinks = sidebarBlogPosts.slice(0, 5).map((entry) => ({
         <span>{title}</span>
       </nav>
       <h1 id="internal-page-heading" class="internal-hero-title">{title}</h1>
-      {isHearingDoctorBlog && (
+      {isBlogEntry && (
         <div class="blog-info-container" aria-label="Blog post information">
           {displayedAuthorName && (
             <span class="blog-info-item">
@@ -89,7 +74,7 @@ const sidebarBlogLinks = sidebarBlogPosts.slice(0, 5).map((entry) => ({
   <section class="internal-content-section">
     <div class="internal-content-container">
       <div class="content-container-left">
-        <article class={isHearingDoctorBlog ? "internal-article-content" : "internal-article"}>
+        <article class={isBlogEntry ? "internal-article-content" : "internal-article"}>
           {featuredImage && (
             <figure class="blog-entry-featured-image">
               <img src={featuredImage.src} alt={featuredImage.alt} loading="eager" decoding="async" />
@@ -100,8 +85,8 @@ const sidebarBlogLinks = sidebarBlogPosts.slice(0, 5).map((entry) => ({
         </article>
       </div>
 
-      <aside class="sidebar-container" aria-label={isHearingDoctorBlog ? "Related information" : `${title} sidebar`}>
-        {isHearingDoctorBlog ? (
+      <aside class="sidebar-container" aria-label={isBlogEntry ? "Related information" : `${title} sidebar`}>
+        {isBlogEntry ? (
           <div class="sidebar-cta">
             <div class="sidebar-cta-image">
               <img src="/assets/new-leaf-hearing-care-image-017.webp" alt="New Leaf Hearing Care consultation" loading="lazy" decoding="async" />
@@ -121,13 +106,13 @@ const sidebarBlogLinks = sidebarBlogPosts.slice(0, 5).map((entry) => ({
         )}
 
         <div class="sidebar-blogs">
-          {isHearingDoctorBlog ? (
+          {isBlogEntry ? (
             <p class="sidebar-blogs-title">Recent News &amp; Articles</p>
           ) : (
             <h2 class="sidebar-blogs-title">Recent News/Articles</h2>
           )}
           <div class="sidebar-blogs__links">
-            {isHearingDoctorBlog ? (
+            {sidebarBlogLinks.length > 0 ? (
               <>
                 {sidebarBlogLinks.map((post) => (
                   <a href={post.href}>{post.title}</a>

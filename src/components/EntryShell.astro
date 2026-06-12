@@ -1,7 +1,14 @@
 ---
 import PortableRichText from "./PortableRichText.astro";
+import { getSidebarBlogLinks, renderSidebarBlogLinks } from "../utils/sidebarBlogLinks";
+
 const { shell = "", introContent = [], content = [] } = Astro.props;
-const [beforeIntro = "", afterIntroRaw = ""] = shell.split("<!--EMDASH_INTRO_CONTENT-->");
+const sidebarBlogLinks = await getSidebarBlogLinks();
+const hydratedShell = shell.replace(
+  /<div class="sidebar-blogs__links">[\s\S]*?<\/div>/g,
+  `<div class="sidebar-blogs__links">${renderSidebarBlogLinks(sidebarBlogLinks)}</div>`
+);
+const [beforeIntro = "", afterIntroRaw = ""] = hydratedShell.split("<!--EMDASH_INTRO_CONTENT-->");
 const [between = "", afterContent = ""] = afterIntroRaw.split("<!--EMDASH_MAIN_CONTENT-->");
 ---
 <Fragment set:html={beforeIntro} />
