@@ -557,16 +557,38 @@ width: 100%;
   overflow: visible;
 }
 
+.team-section.has-carousel .team-carousel {
+overflow: hidden;
+}
+
 .team-track {
 width: min(1280px, calc(100% - 40px));
   margin: 0 auto;
   display: flex;
+  flex-wrap: wrap;
   gap: 30px;
   justify-content: center;
 }
 
+.team-section.has-carousel .team-track {
+--team-gap: 30px;
+  flex-wrap: nowrap;
+  gap: var(--team-gap);
+  justify-content: flex-start;
+  transition: transform 0.5s ease;
+  will-change: transform;
+}
+
+.team-section.has-carousel .team-track.is-resetting {
+transition: none;
+}
+
 .team-controls {
 display: none;
+}
+
+.team-section.has-carousel .team-controls {
+display: flex;
 }
 
 .team-nav {
@@ -577,6 +599,7 @@ width: 52px;
   border-radius: 50%;
   color: var(--primary);
   background: var(--primary-light);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -601,7 +624,7 @@ width: 24px;
 }
 
 .team-card {
-flex: 1 1 0;
+flex: 1 1 260px;
   width: 100%;
   max-width: 300px;
   height: 400px;
@@ -612,6 +635,12 @@ flex: 1 1 0;
   position: relative;
   background: linear-gradient(180deg, var(--light) 0%, var(--accent-light) 100%);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.team-section.has-carousel .team-card {
+flex: 0 0 calc((100% - (var(--team-gap) * 3)) / 4);
+  max-width: none;
+  scroll-snap-align: center;
 }
 
 .team-card img {
@@ -1546,7 +1575,7 @@ padding: 0 70px 30px 0;
 }
 
 @media (max-width: 1366px) {
-  .team-track {
+  .team-section.has-carousel .team-track {
   --team-gap: 30px;
       justify-content: flex-start;
       gap: var(--team-gap);
@@ -1556,21 +1585,20 @@ padding: 0 70px 30px 0;
 }
 
 @media (max-width: 1366px) {
-  .team-carousel {
+  .team-section.has-carousel .team-carousel {
   overflow: hidden;
   }
 }
 
 @media (max-width: 1366px) {
-  .team-track.is-resetting {
+  .team-section.has-carousel .team-track.is-resetting {
   transition: none;
   }
 }
 
 @media (max-width: 1366px) {
   .team-controls {
-  display: flex;
-      justify-content: center;
+  justify-content: center;
       gap: 16px;
   }
 }
@@ -1582,7 +1610,7 @@ padding: 0 70px 30px 0;
 }
 
 @media (max-width: 1366px) {
-  .team-card {
+  .team-section.has-carousel .team-card {
   flex: 0 0 calc((100% - (var(--team-gap) * 3)) / 4);
       scroll-snap-align: center;
   }
@@ -1917,13 +1945,13 @@ padding: 0 70px 30px 0;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
-  .team-carousel {
+  .team-section.has-carousel .team-carousel {
   overflow: hidden;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
-  .team-track {
+  .team-section.has-carousel .team-track {
   --team-gap: 30px;
       justify-content: flex-start;
       gap: var(--team-gap);
@@ -1933,13 +1961,13 @@ padding: 0 70px 30px 0;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
-  .team-track.is-resetting {
+  .team-section.has-carousel .team-track.is-resetting {
   transition: none;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
-  .team-card {
+  .team-section.has-carousel .team-card {
   flex: 0 0 calc((100% - var(--team-gap)) / 2);
       aspect-ratio: 7 / 8;
       height: auto;
@@ -1950,8 +1978,7 @@ padding: 0 70px 30px 0;
 
 @media (min-width: 768px) and (max-width: 1024px) {
   .team-controls {
-  display: flex;
-      justify-content: center;
+  justify-content: center;
       gap: 16px;
   }
 }

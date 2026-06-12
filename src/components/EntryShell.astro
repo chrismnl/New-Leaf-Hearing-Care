@@ -1,13 +1,17 @@
 ---
 import PortableRichText from "./PortableRichText.astro";
 import { getSidebarBlogLinks, renderSidebarBlogLinks } from "../utils/sidebarBlogLinks";
+import { getPublishedTeamMembers, replaceTeamSections } from "../utils/teamMembers";
 
 const { shell = "", introContent = [], content = [] } = Astro.props;
-const sidebarBlogLinks = await getSidebarBlogLinks();
-const hydratedShell = shell.replace(
+const [sidebarBlogLinks, teamMembers] = await Promise.all([
+  getSidebarBlogLinks(),
+  getPublishedTeamMembers()
+]);
+const hydratedShell = replaceTeamSections(shell.replace(
   /<div class="sidebar-blogs__links">[\s\S]*?<\/div>/g,
   `<div class="sidebar-blogs__links">${renderSidebarBlogLinks(sidebarBlogLinks)}</div>`
-);
+), teamMembers);
 const [beforeIntro = "", afterIntroRaw = ""] = hydratedShell.split("<!--EMDASH_INTRO_CONTENT-->");
 const [between = "", afterContent = ""] = afterIntroRaw.split("<!--EMDASH_MAIN_CONTENT-->");
 ---

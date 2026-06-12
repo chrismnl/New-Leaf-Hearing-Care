@@ -1,8 +1,12 @@
 ---
 import Base from "../layouts/Base.astro";
+import { getPublishedTeamMembers, replaceTeamSections } from "../utils/teamMembers";
 import pageHtml from "../content-shells/static/about.html?raw";
 export const cacheHint = 3600;
+
+const teamMembers = await getPublishedTeamMembers();
+const hydratedPageHtml = replaceTeamSections(pageHtml, teamMembers);
 ---
 <Base title="About Us | New Leaf Hearing Care" description="New Leaf Hearing Care is an audiology and hearing aid clinic with trusted audiologists providing professional hearing services in Arvada, CO, and Littleton, CO.">
-  <Fragment set:html={pageHtml} />
+  <Fragment set:html={hydratedPageHtml} />
 </Base>

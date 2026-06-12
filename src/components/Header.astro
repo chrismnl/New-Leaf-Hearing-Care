@@ -1,3 +1,9 @@
+---
+import { getPublishedTeamMembers } from "../utils/teamMembers";
+
+const teamMembers = await getPublishedTeamMembers();
+---
+
 <header class="site-header">
       <div class="header-shell">
         <a class="logo-link" href="/" aria-label="New Leaf Hearing Care home">
@@ -41,10 +47,9 @@
                     </div>
                     <div class="mega-menu__column">
                       <p class="mega-menu__title">Our Team</p>
-                      <a href="/audiologist/dusty-jessen/">Dusty Jessen, Au.D.</a>
-                      <a href="/audiologist/julie-raney/">Julie Raney, M.S.</a>
-                      <a href="/audiologist/lisa-marie-bell/">Lisa Marie Bell, Au.D.</a>
-                      <a href="/patient-care-coordinator/rose-young/">Rose Young</a>
+                      {teamMembers.map((member) => (
+                        <a href={member.href}>{member.name}</a>
+                      ))}
                     </div>
                   </div>
                 </div>
