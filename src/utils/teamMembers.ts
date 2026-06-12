@@ -85,6 +85,7 @@ export const renderTeamSection = (members: TeamMember[]) => {
   if (!members.length) return "";
 
   const hasCarousel = members.length > 4;
+  const hasMobileCarousel = members.length > 1;
   const cards = members
     .map(
       (member) => `<a class="team-card" href="${escapeHtml(member.href)}">
@@ -97,7 +98,7 @@ export const renderTeamSection = (members: TeamMember[]) => {
     )
     .join("");
 
-  const controls = hasCarousel
+  const controls = hasCarousel || hasMobileCarousel
     ? `<div class="team-controls" aria-label="Team carousel controls">
           <button class="team-nav" type="button" aria-label="Previous team member" data-team-prev>
             <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -112,7 +113,7 @@ export const renderTeamSection = (members: TeamMember[]) => {
         </div>`
     : "";
 
-  return `<section class="team-section new-leaf-texture-overlay${hasCarousel ? " has-carousel" : ""}" aria-labelledby="team-heading">
+  return `<section class="team-section new-leaf-texture-overlay${hasCarousel ? " has-carousel" : ""}${hasMobileCarousel ? " has-mobile-carousel" : ""}" aria-labelledby="team-heading">
         <div class="team-section__inner heading-group">
           <p class="eyebrow eyebrow--light">Serving Arvada, CO and Littleton, CO</p>
           <h2 id="team-heading" class="section-title section-title--light">Meet The Team</h2>

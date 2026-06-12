@@ -1989,6 +1989,47 @@ padding: 0 70px 30px 0;
   }
 }
 
+@media (max-width: 1024px) {
+  .team-section.has-mobile-carousel .team-carousel {
+  overflow: hidden;
+  }
+}
+
+@media (max-width: 1024px) {
+  .team-section.has-mobile-carousel .team-track {
+  --team-gap: 30px;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      gap: var(--team-gap);
+      transition: transform 0.5s ease;
+      will-change: transform;
+  }
+}
+
+@media (max-width: 1024px) {
+  .team-section.has-mobile-carousel .team-track.is-resetting {
+  transition: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .team-section.has-mobile-carousel .team-card {
+  flex: 0 0 calc((100% - var(--team-gap)) / 2);
+      aspect-ratio: 7 / 8;
+      height: auto;
+      max-width: none;
+      scroll-snap-align: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .team-section.has-mobile-carousel .team-controls {
+  display: flex;
+      justify-content: center;
+      gap: 16px;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1024px) {
   .audiology-services-list {
   width: 100%;
@@ -2366,6 +2407,15 @@ padding: 0 70px 30px 0;
 @media (max-width: 767px) {
   .team-card {
   aspect-ratio: 7 / 8;
+  }
+}
+
+@media (max-width: 767px) {
+  .team-section.has-carousel .team-card,
+  .team-section.has-mobile-carousel .team-card {
+  flex: 0 0 100%;
+      max-width: none;
+      scroll-snap-align: center;
   }
 }
 

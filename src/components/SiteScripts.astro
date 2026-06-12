@@ -351,7 +351,10 @@
 
       (() => {
         const section = document.querySelector(".team-section");
-        if (!section || !section.classList.contains("has-carousel")) return;
+        if (
+          !section ||
+          (!section.classList.contains("has-carousel") && !section.classList.contains("has-mobile-carousel"))
+        ) return;
 
         const track = section.querySelector(".team-track");
         const originalCards = Array.from(section.querySelectorAll(".team-card"));
@@ -362,6 +365,9 @@
         let position = 0;
         let visibleCount = 4;
         let isAnimating = false;
+
+        const shouldUseCarousel = () =>
+          section.classList.contains("has-carousel") || window.matchMedia("(max-width: 1024px)").matches;
 
         const getVisibleCount = () => {
           if (window.matchMedia("(min-width: 1025px)").matches) return Math.min(4, originalCards.length);
@@ -390,6 +396,13 @@
         const buildLoop = () => {
           visibleCount = getVisibleCount();
           track.replaceChildren(...originalCards);
+
+          if (!shouldUseCarousel()) {
+            position = 0;
+            track.style.transform = "";
+            isAnimating = false;
+            return;
+          }
 
           const beforeClones = originalCards.slice(-visibleCount).map((card) => {
             const clone = card.cloneNode(true);
